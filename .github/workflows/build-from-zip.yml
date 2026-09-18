@@ -20,7 +20,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: unzip -q SocialFlowLocal_GitHubReady-2.zip -d extracted
+      - - name: Unzip project
+  run: |
+    rm -rf extracted
+    mkdir extracted
+    unzip -q SocialFlowLocal_GitHubReady-2.zip -d extracted
 
       - name: Set up Java
         uses: actions/setup-java@v4
