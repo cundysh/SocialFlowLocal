@@ -27,14 +27,25 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK
+      - name: Install Android SDK 35
         run: |
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10.2"
+
+      - name: Build APK
+        working-directory: extracted/SocialFlowLocal_GitHubReady
+        run: gradle --no-daemon assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SocialFlowLocal-debug-apk
+          path: extracted/SocialFlowLocal_GitHubReady/app/build/outputs/apk/debug/app-debug.apk
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
