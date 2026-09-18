@@ -20,7 +20,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      unzip -q SocialFlowLocal_GitHubReady-2.zip -d extracted
+      - name: Unzip project
+        run: |
+          rm -rf extracted
+          mkdir extracted
+          unzip -q SocialFlowLocal_GitHubReady-2.zip -d extracted
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -35,6 +39,22 @@ jobs:
           test -n "$SDKMANAGER"
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.7"
+
+      - name: Build APK
+        working-directory: extracted/SocialFlowLocal_GitHubReady
+        run: gradle --no-daemon assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SocialFlowLocal-X-v0.2-debug-apk
+          path: extracted/SocialFlowLocal_GitHubReady/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error          "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
